@@ -1,0 +1,3 @@
+package Minecraft;
+
+1;
