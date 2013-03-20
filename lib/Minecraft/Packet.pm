@@ -56,6 +56,17 @@ sub recvString{
     die("connection disconnect") unless(defined(recv($fh, $str, $length, MSG_WAITALL)));
     ($length, $str);
 }
+sub recvBytes{
+    my $self = shift;
+    my $fh = shift;
+    my @bytes;
+    my $bin;
+    my $length = $self->recvShort($fh);
+    die("connection disconnect") unless(defined(recv($fh, $bin, $length, MSG_WAITALL)));
+    $bin;
+}
+
+
 sub recvStream{
     my $self = shift;
     my $fh = shift;
@@ -69,7 +80,7 @@ sub sendPacket{
     my $fh = shift;
     my $packet = shift;
     use YAML;
-    print "send Packet:".Dump(unpack("C*", $packet))."\n";
+    print Dump unpack("C*", $packet);
     print $fh $packet;
 }
 sub sendByte{
@@ -82,7 +93,7 @@ sub sendShort{
     my $self = shift;
     my $fh = shift;
     my $short = shift;
-    $self->sendPacket($fh, pack("n", $byte));
+    $self->sendPacket($fh, pack("n", $short));
 }
 sub sendInt{
     my $self = shift;
@@ -107,6 +118,14 @@ sub sendString{
     my @chars = unpack('C*',  $string);
     my $packet = pack("n", ($#chars+1)).pack("n*", @chars);
     $self->sendPacket($fh, $packet);
+}
+sub sendBytes{
+    my $self = shift;
+    my $fh = shift;
+    my $bin = shift;
+    my @bytes = unpack('C*',  $bin);
+    $self->sendShort($fh, $#bytes+1);
+    $self->sendPacket($fh, $bin);
 }
 
 1;

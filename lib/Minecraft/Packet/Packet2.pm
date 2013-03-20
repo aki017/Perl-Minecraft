@@ -16,7 +16,7 @@ sub send {
     my $self = shift;
     my $fh = shift;
     $self->sendPacket( $fh, pack("C", 2) );
-    $self->sendByte($fh, 51);
+    $self->sendByte($fh, 60);
     $self->sendString($fh, "aki017");
     $self->sendString($fh, "localhost");
     $sockaddr = getsockname($fh);
